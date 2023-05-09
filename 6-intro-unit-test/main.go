@@ -8,7 +8,7 @@ import (
 )
 
 // 1. aplikasi untuk menghitung penjumlahan 2 bilangan + 5
-func Add2Numbers(number1, number2 int) int {
+func add2Numbers(number1, number2 int) int {
 	var hasil = number1 + number2 + 5
 	return hasil
 }
