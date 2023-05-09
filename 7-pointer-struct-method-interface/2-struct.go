@@ -7,9 +7,16 @@ type karyawan struct {
 	posisi   string
 	domisili string
 	umur     uint
+	nilai    []NilaiKaryawan
 }
 
-type Person struct {
+type NilaiKaryawan struct {
+	Bulan      string
+	Nilai      int
+	NilaiHuruf string
+}
+
+type Orang struct {
 	Nama   string
 	Umur   uint
 	Weight float32
@@ -35,9 +42,8 @@ func main() {
 	karyawan2.nama = "rudi"
 	karyawan2.posisi = "manager"
 	karyawan2.domisili = "surabaya"
-	karyawan2.umur = 21
 
-	var orang3 = karyawan{"andi", "manager", "surabaya", 30}
+	var orang3 = karyawan{"andi", "manager", "surabaya", 30, []NilaiKaryawan{}}
 
 	var pegawai []karyawan
 	pegawai = append(pegawai, karyawan1)
