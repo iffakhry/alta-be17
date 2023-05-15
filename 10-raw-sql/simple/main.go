@@ -6,6 +6,7 @@ import (
 	"fakhry/rawsql/entities"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -13,7 +14,8 @@ import (
 
 func main() {
 	// <username>:<password>@tcp(<hostname>:<portdb>)/<db_name>
-	var connectionString = "root:qwerty123@tcp(127.0.0.1:3306)/db_raw"
+	// var connectionString = "root:qwerty123@tcp(127.0.0.1:3306)/db_raw"
+	var connectionString = os.Getenv("DB_CONNECTION")
 	db, err := sql.Open("mysql", connectionString)
 	// ketika errornya ada isinya --> berarti terjadi error
 	if err != nil {
