@@ -3,12 +3,11 @@ package controllers
 import (
 	"database/sql"
 	"fakhry/rawsql/entities"
+	"fmt"
 	"log"
-	"os"
 )
 
 func GetAllProducts(db *sql.DB) []entities.Product {
-	db, _ = sql.Open("mysql", os.Getenv("DB_CONNECTION"))
 	rows, errSelect := db.Query("SELECT id, nama_produk, harga, stock, keterangan FROM products")
 	if errSelect != nil {
 		log.Fatal("error query select", errSelect.Error())
@@ -27,4 +26,19 @@ func GetAllProducts(db *sql.DB) []entities.Product {
 
 	// fmt.Println("all:", allProduct)
 	return allProduct
+}
+
+func AddProduct(db *sql.DB, newProduct entities.Product) error {
+	result, err := db.Exec("INSERT INTO products (nama_produk, harga, stock, keterangan) VALUES (?, ?,?,?)", newProduct.NamaProduk, newProduct.Harga, newProduct.Stock, newProduct.Keterangan)
+	if err != nil {
+		return fmt.Errorf("AddAlbum: %v", err)
+	}
+
+	// Get the new album's generated ID for the client.
+	_, errId := result.LastInsertId()
+	if errId != nil {
+		return fmt.Errorf("AddAlbum: %v", errId)
+	}
+	// Return the new album's ID.
+	return nil
 }
