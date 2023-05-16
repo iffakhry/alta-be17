@@ -53,17 +53,21 @@ func main() {
 		}
 
 	case 2:
-		var newproduct = entities.Product{
-			NamaProduk: "buku",
-			Harga:      10000,
-			Stock:      10,
-			Keterangan: "buku tulis",
-		}
-		idNew, err := AddProduct(db, newproduct)
+		var newproduct entities.Product
+		fmt.Println("Masukkan Nama Product:")
+		fmt.Scanln(&newproduct.NamaProduk)
+		fmt.Println("Masukkan Harga Product:")
+		fmt.Scanln(&newproduct.Harga)
+		fmt.Println("Masukkan Stock Product:")
+		fmt.Scanln(&newproduct.Stock)
+		fmt.Println("Masukkan Keterangan Product:")
+		fmt.Scanln(&newproduct.Keterangan)
+
+		err := controllers.AddProduct(db, newproduct)
 		if err != nil {
 			fmt.Println("error", err.Error())
 		} else {
-			fmt.Println("id porduct", idNew)
+			fmt.Println("add product success")
 		}
 	}
 
@@ -93,19 +97,4 @@ func main() {
 
 	// query insert
 
-}
-
-func AddProduct(db *sql.DB, newProduct entities.Product) (int64, error) {
-	result, err := db.Exec("INSERT INTO products (nama_produk, harga, stock, keterangan) VALUES (?, ?,?,?)", newProduct.NamaProduk, newProduct.Harga, newProduct.Stock, newProduct.Keterangan)
-	if err != nil {
-		return 0, fmt.Errorf("AddAlbum: %v", err)
-	}
-
-	// Get the new album's generated ID for the client.
-	id, err := result.LastInsertId()
-	if err != nil {
-		return 0, fmt.Errorf("AddAlbum: %v", err)
-	}
-	// Return the new album's ID.
-	return id, nil
 }
