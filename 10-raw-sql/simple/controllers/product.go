@@ -4,9 +4,11 @@ import (
 	"database/sql"
 	"fakhry/rawsql/entities"
 	"log"
+	"os"
 )
 
 func GetAllProducts(db *sql.DB) []entities.Product {
+	db, _ = sql.Open("mysql", os.Getenv("DB_CONNECTION"))
 	rows, errSelect := db.Query("SELECT id, nama_produk, harga, stock, keterangan FROM products")
 	if errSelect != nil {
 		log.Fatal("error query select", errSelect.Error())
