@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -8,9 +9,9 @@ import (
 )
 
 type article struct {
-	ID      int    `json:"id"`
-	Title   string `json:"title"`
-	Content string `json:"content"`
+	ID      int    `json:"id" form:"id"`
+	Title   string `json:"title" form:"title"`
+	Content string `json:"content" form:"content"`
 }
 
 type User struct {
@@ -24,17 +25,24 @@ func main() {
 	e := echo.New()
 	// membuat route / endpoint
 	e.GET("/articles", GetAllArticles)
-	e.POST("/articles", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, map[string]any{
-			"message": "data berhasil ditambahkan",
-			"status":  true,
-		})
-	})
+	// e.POST("/articles", func(c echo.Context) error {
+	// 	return c.JSON(http.StatusOK, map[string]any{
+	// 		"message": "data berhasil ditambahkan",
+	// 		"status":  true,
+	// 	})
+	// })
 
 	// endpoint with param
 	e.GET("/users/:id", GetUserByIdController)
-
+	// sample endpoint with query param
 	e.GET("/users", GetAllUsersController)
+	// sample endpoint with form value
+	e.POST("/users", AddUserController)
+	// sample endpoint with bind json
+	e.POST("/articles", AddArticleController)
+	e.PUT("/articles/:id", UpdateArticleController)
+
+	e.DELETE("/users/:id", GetUserByIdController)
 	// start server di port
 	e.Logger.Fatal(e.Start(":8080"))
 
@@ -100,5 +108,60 @@ func GetAllUsersController(c echo.Context) error {
 		"page":     pageQuery,
 		"name":     nameQuery,
 		"domisili": domisiliQuery,
+	})
+}
+
+// form value
+func AddUserController(c echo.Context) error {
+	//get data from form value
+	nameForm := c.FormValue("name")
+	emailForm := c.FormValue("email")
+
+	var userNew = User{
+		Name:  nameForm,
+		Email: emailForm,
+	}
+
+	return c.JSON(http.StatusOK, map[string]any{
+		"message": "berhasil",
+		"data":    userNew,
+	})
+}
+
+// bind
+func AddArticleController(c echo.Context) error {
+	articleInput := article{}
+	// bind, membaca data yg dikirimkan client via request body
+	errBind := c.Bind(&articleInput)
+	if errBind != nil {
+		return c.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error bind data",
+		})
+	}
+	// c.Request().FormFile("gambar")
+
+	log.Println("article title", articleInput.Title)
+
+	return c.JSON(http.StatusOK, map[string]any{
+		"message": "berhasil",
+		"data":    articleInput,
+	})
+}
+
+func UpdateArticleController(c echo.Context) error {
+	id := c.Param("id")
+
+	articleInput := article{}
+	errBind := c.Bind(&articleInput)
+	if errBind != nil {
+		return c.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error bind data",
+		})
+	}
+	// articleInput.ID = id
+	return c.JSON(http.StatusOK, map[string]any{
+		"message": "berhasil",
+		"id":      id,
+		"data":    articleInput,
 	})
 }
