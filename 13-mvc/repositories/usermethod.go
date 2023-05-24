@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"be17/mvc/entities"
 	"be17/mvc/models"
 	"errors"
 
@@ -11,13 +12,28 @@ type UserRepo struct {
 	Db *gorm.DB
 }
 
-func (ur UserRepo) GetAllUser() ([]models.User, error) {
+func (ur UserRepo) GetAllUser() ([]entities.UserCore, error) {
 	var usersData []models.User
 	tx := ur.Db.Find(&usersData) // select * from users
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
-	return usersData, nil
+
+	// mapping dari struct gorm model ke struct entities core
+	var usersCoreAll []entities.UserCore
+	for _, value := range usersData {
+		var userCore = entities.UserCore{
+			Id:        value.ID,
+			Name:      value.Name,
+			Phone:     value.Phone,
+			Email:     value.Email,
+			Password:  value.Password,
+			CreatedAt: value.CreatedAt,
+			UpdatedAt: value.UpdatedAt,
+		}
+		usersCoreAll = append(usersCoreAll, userCore)
+	}
+	return usersCoreAll, nil
 }
 
 func (ur UserRepo) CreateUser(userInput models.User) error {

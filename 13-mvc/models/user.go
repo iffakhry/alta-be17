@@ -14,3 +14,7 @@ type User struct {
 	Email    string `gorm:"unique" json:"email" form:"email"`
 	Password string `json:"password" form:"password"`
 }
+
+//func untuk mapping
+// model to core
+// core to model
