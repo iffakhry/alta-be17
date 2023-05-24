@@ -101,7 +101,7 @@ func CreateUserController(c echo.Context) error {
 	// proses insert data
 	tx := DB.Create(&userInput) // insert into users set name = .....
 	if tx.Error != nil {
-		return c.JSON(http.StatusBadRequest, map[string]any{
+		return c.JSON(http.StatusInternalServerError, map[string]any{
 			"message": "error insert data",
 		})
 	}
