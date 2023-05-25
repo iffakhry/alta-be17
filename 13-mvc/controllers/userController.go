@@ -3,6 +3,7 @@ package controllers
 import (
 	"be17/mvc/entities"
 	"be17/mvc/helper"
+	"be17/mvc/middlewares"
 	"be17/mvc/repositories"
 	"log"
 	"net/http"
@@ -12,6 +13,11 @@ import (
 )
 
 func GetAllUserController(c echo.Context) error {
+	idToken := middlewares.ExtractTokenUserId(c)
+	log.Println("idToken:", idToken)
+	if idToken != 1 {
+		return c.JSON(http.StatusUnauthorized, helper.FailedResponse("unauthorized, hanya bisa dibaca oleh budi"))
+	}
 
 	// memanggil func di repositories
 	results, err := repositories.GetAllUser()
