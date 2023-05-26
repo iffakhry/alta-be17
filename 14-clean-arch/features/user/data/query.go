@@ -2,6 +2,7 @@ package data
 
 import (
 	"be17/cleanarch/features/user"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -11,8 +12,25 @@ type userQuery struct {
 }
 
 // Insert implements user.UserDataInterface
-func (*userQuery) Insert(input user.Core) error {
-	panic("unimplemented")
+func (repo *userQuery) Insert(input user.Core) error {
+	// mapping dari struct entities core ke gorm model
+	userInputGorm := User{
+		Name:     input.Name,
+		Phone:    input.Phone,
+		Email:    input.Email,
+		Password: input.Password,
+	}
+
+	tx := repo.db.Create(&userInputGorm) // insert into users set name = .....
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	if tx.RowsAffected == 0 {
+		return errors.New("insert failed, row affected = 0")
+	}
+
+	return nil
 }
 
 // SelectAll implements user.UserDataInterface

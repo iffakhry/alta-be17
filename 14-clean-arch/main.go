@@ -32,6 +32,7 @@ func main() {
 	userHandlerAPI := _userHandler.New(userService)
 
 	e.GET("/users", userHandlerAPI.GetAllUser)
+	e.POST("/users", userHandlerAPI.CreateUser)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
