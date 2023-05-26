@@ -1,6 +1,7 @@
 package data
 
 import (
+	"be17/cleanarch/app/middlewares"
 	"be17/cleanarch/features/user"
 	"errors"
 
@@ -11,15 +12,51 @@ type userQuery struct {
 	db *gorm.DB
 }
 
+func New(db *gorm.DB) user.UserDataInterface {
+	return &userQuery{
+		db: db,
+	}
+}
+
+// Login implements user.UserDataInterface
+func (repo *userQuery) Login(email string, password string) (user.Core, string, error) {
+	var userGorm User
+	tx := repo.db.Where("email = ? AND password = ?", email, password).First(&userGorm)
+	if tx.Error != nil {
+		return user.Core{}, "", tx.Error
+	}
+
+	if tx.RowsAffected == 0 {
+		return user.Core{}, "", errors.New("login failed, email dan password salah")
+	}
+
+	token, errToken := middlewares.CreateToken(int(userGorm.ID))
+	if errToken != nil {
+		return user.Core{}, "", errToken
+	}
+
+	dataCore := user.Core{
+		Id:        userGorm.ID,
+		Name:      userGorm.Name,
+		Phone:     userGorm.Phone,
+		Email:     userGorm.Email,
+		Password:  userGorm.Password,
+		CreatedAt: userGorm.CreatedAt,
+		UpdatedAt: userGorm.UpdatedAt,
+	}
+	return dataCore, token, nil
+}
+
 // Insert implements user.UserDataInterface
 func (repo *userQuery) Insert(input user.Core) error {
 	// mapping dari struct entities core ke gorm model
-	userInputGorm := User{
-		Name:     input.Name,
-		Phone:    input.Phone,
-		Email:    input.Email,
-		Password: input.Password,
-	}
+	// userInputGorm := User{
+	// 	Name:     input.Name,
+	// 	Phone:    input.Phone,
+	// 	Email:    input.Email,
+	// 	Password: input.Password,
+	// }
+	userInputGorm := CoreToModel(input)
 
 	tx := repo.db.Create(&userInputGorm) // insert into users set name = .....
 	if tx.Error != nil {
@@ -56,10 +93,4 @@ func (repo *userQuery) SelectAll() ([]user.Core, error) {
 		usersCoreAll = append(usersCoreAll, userCore)
 	}
 	return usersCoreAll, nil
-}
-
-func New(db *gorm.DB) user.UserDataInterface {
-	return &userQuery{
-		db: db,
-	}
 }

@@ -10,6 +10,11 @@ type userQueryRaw struct {
 	db *gorm.DB
 }
 
+// Login implements user.UserDataInterface
+func (*userQueryRaw) Login(email string, password string) (user.Core, string, error) {
+	panic("unimplemented")
+}
+
 // Insert implements user.UserDataInterface
 func (*userQueryRaw) Insert(input user.Core) error {
 	panic("unimplemented")

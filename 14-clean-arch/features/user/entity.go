@@ -15,9 +15,12 @@ type Core struct {
 type UserDataInterface interface {
 	SelectAll() ([]Core, error)
 	Insert(input Core) error
+	Login(email string, password string) (Core, string, error)
+	// SelectById(id int) (Core, error)
 }
 
 type UserServiceInterface interface {
 	GetAll() ([]Core, error)
 	Create(input Core) error
+	Login(email string, password string) (Core, string, error)
 }

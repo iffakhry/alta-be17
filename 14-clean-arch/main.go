@@ -3,9 +3,11 @@ package main
 import (
 	"be17/cleanarch/app/config"
 	"be17/cleanarch/app/database"
-	_userData "be17/cleanarch/features/user/data"
-	_userHandler "be17/cleanarch/features/user/handler"
-	_userService "be17/cleanarch/features/user/service"
+	"be17/cleanarch/app/router"
+
+	// _bookData "be17/cleanarch/features/book/data"
+	// _bookHandler "be17/cleanarch/features/book/handler"
+	// _bookService "be17/cleanarch/features/book/service"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -26,13 +28,16 @@ func main() {
 		Format: `[${time_rfc3339}] ${status} ${method} ${host}${path} ${latency_human}` + "\n",
 	}))
 
-	userData := _userData.New(dbMysql)
-	// userData := _userData.NewRaw(dbMysql)
-	userService := _userService.New(userData)
-	userHandlerAPI := _userHandler.New(userService)
+	router.InitRouter(dbMysql, e)
 
-	e.GET("/users", userHandlerAPI.GetAllUser)
-	e.POST("/users", userHandlerAPI.CreateUser)
+	// userData := _userData.New(dbMysql)
+	// // userData := _userData.NewRaw(dbMysql)
+	// userService := _userService.New(userData)
+	// userHandlerAPI := _userHandler.New(userService)
+
+	// e.GET("/users", userHandlerAPI.GetAllUser, middlewares.JWTMiddleware())
+	// e.POST("/users", userHandlerAPI.CreateUser)
+	// e.POST("/login", userHandlerAPI.Login)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

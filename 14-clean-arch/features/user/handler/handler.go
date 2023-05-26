@@ -65,3 +65,27 @@ func (handler *UserHandler) CreateUser(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, helper.SuccessResponse("success insert data"))
 }
+
+func (handler *UserHandler) Login(c echo.Context) error {
+	loginInput := AuthRequest{}
+	errBind := c.Bind(&loginInput)
+	if errBind != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponse("error bind data"))
+	}
+
+	dataLogin, token, err := handler.userService.Login(loginInput.Email, loginInput.Password)
+	if err != nil {
+		if strings.Contains(err.Error(), "login failed") {
+			return c.JSON(http.StatusBadRequest, helper.FailedResponse(err.Error()))
+		} else {
+			return c.JSON(http.StatusInternalServerError, helper.FailedResponse("error login, intrnal server error"))
+		}
+	}
+
+	return c.JSON(http.StatusOK, helper.SuccessWithDataResponse("login success", map[string]any{
+		"token": token,
+		"email": dataLogin.Email,
+		"id":    dataLogin.Id,
+	}))
+
+}
