@@ -37,6 +37,9 @@ func (service *userService) Create(input user.Core) error {
 // GetAll implements user.UserServiceInterface
 func (service *userService) GetAll() ([]user.Core, error) {
 	data, err := service.userData.SelectAll()
+	if err != nil {
+		return nil, err
+	}
 	return data, err
 }
 
