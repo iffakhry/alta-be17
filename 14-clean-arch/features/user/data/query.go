@@ -3,6 +3,7 @@ package data
 import (
 	"be17/cleanarch/app/middlewares"
 	"be17/cleanarch/features/user"
+	"be17/cleanarch/helper"
 	"errors"
 
 	"gorm.io/gorm"
@@ -21,13 +22,18 @@ func New(db *gorm.DB) user.UserDataInterface {
 // Login implements user.UserDataInterface
 func (repo *userQuery) Login(email string, password string) (user.Core, string, error) {
 	var userGorm User
-	tx := repo.db.Where("email = ? AND password = ?", email, password).First(&userGorm)
+	tx := repo.db.Where("email = ?", email).First(&userGorm) // select * from users limit 1
 	if tx.Error != nil {
 		return user.Core{}, "", tx.Error
 	}
 
 	if tx.RowsAffected == 0 {
 		return user.Core{}, "", errors.New("login failed, email dan password salah")
+	}
+
+	checkPassword := helper.CheckPasswordHash(password, userGorm.Password)
+	if !checkPassword {
+		return user.Core{}, "", errors.New("login failed, password salah")
 	}
 
 	token, errToken := middlewares.CreateToken(int(userGorm.ID))
@@ -56,7 +62,12 @@ func (repo *userQuery) Insert(input user.Core) error {
 	// 	Email:    input.Email,
 	// 	Password: input.Password,
 	// }
+	hashedPassword, errHash := helper.HashPassword(input.Password)
+	if errHash != nil {
+		return errors.New("error hash password")
+	}
 	userInputGorm := CoreToModel(input)
+	userInputGorm.Password = hashedPassword
 
 	tx := repo.db.Create(&userInputGorm) // insert into users set name = .....
 	if tx.Error != nil {
