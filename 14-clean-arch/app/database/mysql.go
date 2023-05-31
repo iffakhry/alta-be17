@@ -2,6 +2,7 @@ package database
 
 import (
 	"be17/cleanarch/app/config"
+	"be17/cleanarch/features/user/data"
 	"fmt"
 
 	"gorm.io/driver/mysql"
@@ -23,7 +24,7 @@ func InitDBMysql(cfg *config.AppConfig) *gorm.DB {
 	return db
 }
 
-func InitialMigration() {
-	// DB.AutoMigrate(&User{})
+func InitialMigration(db *gorm.DB) {
+	db.AutoMigrate(&data.User{})
 	// auto migrate untuk table book
 }

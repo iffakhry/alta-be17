@@ -5,6 +5,7 @@ import (
 	"be17/cleanarch/features/user"
 	"be17/cleanarch/helper"
 	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -88,7 +89,7 @@ func (repo *userQuery) SelectAll() ([]user.Core, error) {
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
-
+	fmt.Println(usersData)
 	// mapping dari struct gorm model ke struct entities core
 	var usersCoreAll []user.Core
 	for _, value := range usersData {

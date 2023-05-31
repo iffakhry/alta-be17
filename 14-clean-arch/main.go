@@ -19,6 +19,8 @@ func main() {
 	dbMysql := database.InitDBMysql(cfg)
 	// dbPosgres := database.InitDBPosgres(cfg)
 
+	database.InitialMigration(dbMysql)
+
 	e := echo.New()
 
 	e.Pre(middleware.RemoveTrailingSlash())
@@ -39,5 +41,5 @@ func main() {
 	// e.POST("/users", userHandlerAPI.CreateUser)
 	// e.POST("/login", userHandlerAPI.Login)
 
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":80"))
 }
