@@ -67,7 +67,7 @@ sudo chmod 777 /var/run/docker.sock
 docker build -t <nama-image>:<tag> .
 
 # example
-docker build -t be15-images:latest .
+docker build -t beapi-images:latest .
 ```
 
 ## Show Image List
@@ -84,7 +84,7 @@ docker rmi <image-id>
 docker rmi <image-name>
 
 # example:
-docker rmi be15-images
+docker rmi beapi-images
 ```
 
 ## Create Docker Container
@@ -102,10 +102,10 @@ docker run -d
 --name <container-name> <image-name>:<tag>
 
 # example:
-docker run -p 80:80 --name apiContainer api-images:latest
+docker run -p 80:80 --name beapiContainer beapi-images:latest
 
 # example with env
-docker run -d -p 80:80 -e JWT_KEY=blabla -e DBUSER=root -e DBPASS=abcdef -e DBHOST=10.10.20.30 -e DBPORT=3306 -e DBNAME=dbapi --name be15Clean be15clean-images:latest
+docker run -d -p 80:80 -e JWT_KEY=blabla -e DBUSER=root -e DBPASS=abcdef -e DBHOST=10.10.20.30 -e DBPORT=3306 -e DBNAME=dbapi --name beapiContainer beapi-images:latest
 ```
 
 ## Show Container
@@ -131,7 +131,7 @@ docker rm <container-name>
 docker rm <container-id>
 
 # example
-docker rm apiContainer
+docker rm beapiContainer
 ```
 
 ## Docker Logs Container
